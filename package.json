@@ -1,0 +1,28 @@
+{
+  "name": "serverless-migrate-plugin",
+  "version": "0.0.1",
+  "description": "Serverless plugin for migrate",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EliuX/serverless-migrate-plugin.git"
+  },
+  "keywords": [
+    "serverless",
+    "migrate",
+    "plugin",
+    "lambda"
+  ],
+  "author": "Eliecer Hernandez <eliecerhdz@gmail.com> (https://eliux.github.io)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EliuX/serverless-migrate-plugin/issues"
+  },
+  "homepage": "https://github.com/EliuX/serverless-migrate-plugin#readme",
+  "dependencies": {
+    "migrate": "^1.6.2"
+  }
+}
