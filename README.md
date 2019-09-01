@@ -20,12 +20,12 @@ Check out the project located in the folder [example](example) of this repositor
 README with all the explanation you need to start creating your migrations. 
 Just for you to have an idea, this is the only thing you need to start doing your migrations:
 
-1. Install serverless-migrate-plugin in your project:
+1. Install `serverless-migrate-plugin` in your project:
 ```bash
 npm i serverless-migrate-plugin
 ```
 
-1. Add it to your serverless.yml to the section of `plugins`:
+1. Add it to your _serverless.yml_ to the section of `plugins`:
 ```yaml
 plugins: 
   - serverless-migrate-plugin
