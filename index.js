@@ -5,11 +5,20 @@ var dateFormat = require('dateformat');
 var program = require('commander');
 var chalk = require('chalk');
 
+const DEFAULT_MIGRATION_STORE = '.migrate';
+
 class MigratePlugin {
     constructor(serverless, options) {
         this.serverless = serverless;
         this.options = options;
         this.provider = this.serverless.getProvider(this.serverless.service.provider.name);
+
+        const commonOptions = {
+            store: {
+                usage: `Specify the migration states store, e.g. ${DEFAULT_MIGRATION_STORE}`,
+                shortcut: 's'
+            }
+        };
 
         this.commands = {
             migrate: {
@@ -19,14 +28,23 @@ class MigratePlugin {
                     list: {
                         lifecycleEvents: ['setup', 'run'],
                         usage: 'List migrations and their status',
+                        options: {
+                            ...commonOptions
+                        }
                     },
                     up: {
                         lifecycleEvents: ['setup', 'run'],
                         usage: 'Migrates up',
+                        options: {
+                            ...commonOptions
+                        }
                     },
                     down: {
                         lifecycleEvents: ['setup', 'run'],
                         usage: 'Migrates down',
+                        options: {
+                            ...commonOptions
+                        }
                     }
                 }
             }
@@ -53,7 +71,7 @@ class MigratePlugin {
     setupMigration() {
         this.migration = new Promise((resolve, reject) => {
             migrate.load({
-                stateStore: '.migrate'
+                stateStore: this.options.store || DEFAULT_MIGRATION_STORE
             }, (err, set) => {
                 if (err) {
                     reject(err);
@@ -96,15 +114,15 @@ class MigratePlugin {
     getMigrationStatusData(migration, set) {
         const result = [migration.title];
 
-        if(migration.timestamp) {
+        if (migration.timestamp) {
             result.push(chalk.cyan(`[${dateFormat(migration.timestamp, program.dateFormat)}]`));
-        }else{
+        } else {
             result.push(chalk.cyan('[not run]'));
         }
 
         result.push(migration.description || '<No Description>');
 
-        if(set.lastRun === migration.title) {
+        if (set.lastRun === migration.title) {
             result.push(chalk.green('<==='));
         }
 
