@@ -41,10 +41,12 @@ class MigratePlugin {
             'migrate:down:setup': this.setupMigration.bind(this),
             'migrate:down:run': this.runCommand.bind(this, 'down')
         };
+
+        process.env = this.serverless.service.provider.environment;
     }
 
     runCommand(cmd) {
-        return this.migration.then(this[cmd])
+        return this.migration.then(this[cmd].bind(this))
             .catch(console.error);
     }
 
@@ -88,12 +90,25 @@ class MigratePlugin {
             process.exit(1);
         }
 
-        set.migrations.forEach(function (migration) {
-            console.log(migration.title, chalk.cyan(migration.timestamp
-                ? ' [' + dateFormat(migration.timestamp, program.dateFormat) + ']'
-                : ' [not run]'),
-                migration.description || '<No Description>');
-        })
+        set.migrations.forEach(m => console.log(... this.getMigrationStatusData(m, set)));
+    }
+
+    getMigrationStatusData(migration, set) {
+        const result = [migration.title];
+
+        if(migration.timestamp) {
+            result.push(chalk.cyan(`[${dateFormat(migration.timestamp, program.dateFormat)}]`));
+        }else{
+            result.push(chalk.cyan('[not run]'));
+        }
+
+        result.push(migration.description || '<No Description>');
+
+        if(set.lastRun === migration.title) {
+            result.push(chalk.green('<==='));
+        }
+
+        return result;
     }
 
     displayHelp() {
