@@ -24,7 +24,6 @@ test, secure, and monitor your Serverless applications.
 For more information, please visit my [website](http://eliux.github.io).
 
 ## License
-
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 [migrate-npm]: https://www.npmjs.com/package/migrate

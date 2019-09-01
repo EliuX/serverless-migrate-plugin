@@ -5,6 +5,11 @@ provider:
   runtime: nodejs10.x
   environment:
     DATABASE_NAME: content
+custom:
+  migrate:
+    store: .migrate2
+    lastRunIndicator: <
+    noDescriptionText: '?'
 
 functions:
   hello:

@@ -70,6 +70,7 @@ class MigratePlugin {
         };
 
         process.env = this.serverless.service.provider.environment;
+        this.projectConfig = this.serverless.service.custom ? this.serverless.service.custom.migrate: {};
     }
 
     runCommand(cmd) {
@@ -80,7 +81,7 @@ class MigratePlugin {
     setupMigration() {
         this.migration = new Promise((resolve, reject) => {
             migrate.load({
-                stateStore: this.options.store || DEFAULT_MIGRATION_STORE
+                stateStore: this.options.store || this.projectConfig.store || DEFAULT_MIGRATION_STORE
             }, (err, set) => {
                 if (err) {
                     reject(err);
@@ -129,10 +130,10 @@ class MigratePlugin {
             result.push(chalk.cyan('[not run]'));
         }
 
-        result.push(migration.description || '<No Description>');
+        result.push(migration.description || this.projectConfig.noDescriptionText || '<No Description>');
 
         if (set.lastRun === migration.title) {
-            result.push(chalk.green('<==='));
+            result.push(chalk.green(this.projectConfig.lastRunIndicator || '<==='));
         }
 
         return result;

@@ -155,6 +155,22 @@ custom:
 
 You will be able to execute migrations on different scenarios (stages).
 
+### Custom variables
+In the serverless.yml in the section custom.migrate, you can specify some variables:
+
+* `store`: The migration states store file you want to use
+* `lastRunIndicator`: The text to append to the last migration that is applied
+* `noDescriptionText`: Text to show when a migration has no description
+
+E.g.
+```yaml
+custom:
+  migrate:
+    store: .migrate2
+    lastRunIndicator: <
+    noDescriptionText: '?'
+```
+
 Note:
 > It is recommended to make invisible such store files by adding a `.` at the beginning and add them to the ignore files.
 
