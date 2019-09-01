@@ -1,9 +1,8 @@
 'use strict';
 
-var migrate = require('migrate');
-var dateFormat = require('dateformat');
-var program = require('commander');
-var chalk = require('chalk');
+const migrate = require('migrate');
+const dateFormat = require('dateformat');
+const chalk = require('chalk');
 
 const DEFAULT_MIGRATION_STORE = '.migrate';
 
@@ -11,12 +10,15 @@ class MigratePlugin {
     constructor(serverless, options) {
         this.serverless = serverless;
         this.options = options;
-        this.provider = this.serverless.getProvider(this.serverless.service.provider.name);
 
         const commonOptions = {
             store: {
                 usage: `The migration states store file you want to use, e.g. ${DEFAULT_MIGRATION_STORE}`,
                 shortcut: 's'
+            },
+            "date-format": {
+                usage: 'Set a date format to use. By default it is yyyy-mm-dd.',
+                shortcut: 'd'
             }
         };
 
@@ -54,6 +56,18 @@ class MigratePlugin {
                             ...commonOptions,
                             ...nameOption
                         }
+                    },
+                    create: {
+                        lifecycleEvents: ['setup', 'run'],
+                        usage: 'Creates migration file',
+                        options: {
+                            "template-file": {
+                                usage: 'Set path to template file to use for new migrations',
+                                shortcut: 't'
+                            },
+                            ...commonOptions,
+                            ...nameOption
+                        }
                     }
                 }
             }
@@ -66,11 +80,14 @@ class MigratePlugin {
             'migrate:up:setup': this.setupMigration.bind(this),
             'migrate:up:run': this.runCommand.bind(this, 'up'),
             'migrate:down:setup': this.setupMigration.bind(this),
-            'migrate:down:run': this.runCommand.bind(this, 'down')
+            'migrate:down:run': this.runCommand.bind(this, 'down'),
+            'migrate:create:setup': this.setupMigration.bind(this),
+            'migrate:create:run': this.runCommand.bind(this, 'create')
         };
 
         process.env = this.serverless.service.provider.environment;
-        this.projectConfig = this.serverless.service.custom ? this.serverless.service.custom.migrate: {};
+        this.config = this.serverless.service.custom ? this.serverless.service.custom.migrate : {};
+        process.env['SERVERLESS_ROOT_PATH'] = this.serverless.config.servicePath;
     }
 
     runCommand(cmd) {
@@ -81,7 +98,8 @@ class MigratePlugin {
     setupMigration() {
         this.migration = new Promise((resolve, reject) => {
             migrate.load({
-                stateStore: this.options.store || this.projectConfig.store || DEFAULT_MIGRATION_STORE
+                stateStore: this.options.store || this.config.store || DEFAULT_MIGRATION_STORE,
+                ignoreMissing: this.config.ignoreMissing || false
             }, (err, set) => {
                 if (err) {
                     reject(err);
@@ -121,19 +139,39 @@ class MigratePlugin {
         set.migrations.forEach(m => console.log(... this.getMigrationStatusData(m, set)));
     }
 
+    create() {
+        const gen = require("migrate/lib/template-generator");
+        const migrationDir = this.config.migrationDir || 'migrations';
+        const templateFile = this.config.templateFile || this.options['template-file'];
+
+        gen({
+            name: this.options.name,
+            dateFormat: this.options["date-format"],
+            templateFile: templateFile,
+            migrationsDirectory: migrationDir,
+            extension: ".js"
+        }, function (err, p) {
+            if (err) {
+                console.error('Template generation error', err.message)
+                process.exit(1);
+            }
+            console.log('create', p);
+        })
+    }
+
     getMigrationStatusData(migration, set) {
         const result = [migration.title];
 
         if (migration.timestamp) {
-            result.push(chalk.cyan(`[${dateFormat(migration.timestamp, program.dateFormat)}]`));
+            result.push(chalk.cyan(`[${dateFormat(migration.timestamp, this.getDateFormat())}]`));
         } else {
             result.push(chalk.cyan('[not run]'));
         }
 
-        result.push(migration.description || this.projectConfig.noDescriptionText || '<No Description>');
+        result.push(migration.description || this.config.noDescriptionText || '<No Description>');
 
         if (set.lastRun === migration.title) {
-            result.push(chalk.green(this.projectConfig.lastRunIndicator || '<==='));
+            result.push(chalk.green(this.config.lastRunIndicator || '<==='));
         }
 
         return result;
@@ -141,6 +179,10 @@ class MigratePlugin {
 
     displayHelp() {
         this.serverless.cli.generateCommandsHelp(['migrate']);
+    }
+
+    getDateFormat() {
+        return this.options["date-format"] || this.config.dateFormat || "yyyy-mm-dd";
     }
 }
 
