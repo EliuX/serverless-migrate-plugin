@@ -1,0 +1,13 @@
+{
+  "name": "sls-migrate-plugin-example",
+  "version": "1.0.0",
+  "description": "Example of use of the serverless-migrate-plugin",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eliecer Hernandez <eliecerhdz@gmail.com> (https://eliux.github.io)",
+  "license": "ISC",
+  "dependencies": {
+    "serverless-migrate-plugin": "file:.."
+  }
+}

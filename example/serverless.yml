@@ -1,0 +1,14 @@
+service: sls-migrate-plugin-example
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  environment:
+    DATABASE_NAME: content
+
+functions:
+  hello:
+    handler: handler.hello
+
+plugins: 
+  - serverless-migrate-plugin

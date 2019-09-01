@@ -15,8 +15,15 @@ class MigratePlugin {
 
         const commonOptions = {
             store: {
-                usage: `Specify the migration states store, e.g. ${DEFAULT_MIGRATION_STORE}`,
+                usage: `The migration states store file you want to use, e.g. ${DEFAULT_MIGRATION_STORE}`,
                 shortcut: 's'
+            }
+        };
+
+        const nameOption = {
+            name: {
+                usage: 'The migration name you want to move to',
+                shortcut: 'n'
             }
         };
 
@@ -36,14 +43,16 @@ class MigratePlugin {
                         lifecycleEvents: ['setup', 'run'],
                         usage: 'Migrates up',
                         options: {
-                            ...commonOptions
+                            ...commonOptions,
+                            ...nameOption
                         }
                     },
                     down: {
                         lifecycleEvents: ['setup', 'run'],
                         usage: 'Migrates down',
                         options: {
-                            ...commonOptions
+                            ...commonOptions,
+                            ...nameOption
                         }
                     }
                 }
@@ -83,7 +92,7 @@ class MigratePlugin {
     }
 
     up(set) {
-        set.up(function (err) {
+        set.up(this.options.name, function (err) {
             if (err) {
                 throw err;
             }
@@ -93,7 +102,7 @@ class MigratePlugin {
     }
 
     down(set) {
-        set.down(function (err) {
+        set.down(this.options.name, function (err) {
             if (err) {
                 throw err;
             }
