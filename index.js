@@ -3,187 +3,187 @@
 const migrate = require('migrate');
 const dateFormat = require('dateformat');
 const chalk = require('chalk');
+const gen = require('migrate/lib/template-generator');
 
 const DEFAULT_MIGRATION_STORE = '.migrate';
 
 class MigratePlugin {
-    constructor(serverless, options) {
-        this.serverless = serverless;
-        this.options = options;
+  constructor(serverless, options) {
+    this.serverless = serverless;
+    this.options = options;
 
-        const commonOptions = {
-            store: {
-                usage: `The migration states store file you want to use, e.g. ${DEFAULT_MIGRATION_STORE}`,
-                shortcut: 's'
+    const commonOptions = {
+      store: {
+        usage: `The migration states store file you want to use, e.g. ${DEFAULT_MIGRATION_STORE}`,
+        shortcut: 's',
+      },
+      'date-format': {
+        usage: 'Set a date format to use. By default it is yyyy-mm-dd.',
+        shortcut: 'd',
+      },
+    };
+
+    const nameOption = {
+      name: {
+        usage: 'The migration name you want to move to',
+        shortcut: 'n',
+      },
+    };
+
+    this.commands = {
+      migrate: {
+        usage: 'Migrations management for Serverless',
+        lifecycleEvents: ['help'],
+        commands: {
+          list: {
+            lifecycleEvents: ['setup', 'run'],
+            usage: 'List migrations and their status',
+            options: {
+              ...commonOptions,
             },
-            "date-format": {
-                usage: 'Set a date format to use. By default it is yyyy-mm-dd.',
-                shortcut: 'd'
-            }
-        };
+          },
+          up: {
+            lifecycleEvents: ['setup', 'run'],
+            usage: 'Migrates up',
+            options: {
+              ...commonOptions,
+              ...nameOption,
+            },
+          },
+          down: {
+            lifecycleEvents: ['setup', 'run'],
+            usage: 'Migrates down',
+            options: {
+              ...commonOptions,
+              ...nameOption,
+            },
+          },
+          create: {
+            lifecycleEvents: ['setup', 'run'],
+            usage: 'Creates migration file',
+            options: {
+              'template-file': {
+                usage: 'Set path to template file to use for new migrations',
+                shortcut: 't',
+              },
+              ...commonOptions,
+              ...nameOption,
+            },
+          },
+        },
+      },
+    };
 
-        const nameOption = {
-            name: {
-                usage: 'The migration name you want to move to',
-                shortcut: 'n'
-            }
-        };
+    this.hooks = {
+      'migrate:help': this.displayHelp.bind(this),
+      'migrate:list:setup': this.setupMigration.bind(this),
+      'migrate:list:run': this.runCommand.bind(this, 'list'),
+      'migrate:up:setup': this.setupMigration.bind(this),
+      'migrate:up:run': this.runCommand.bind(this, 'up'),
+      'migrate:down:setup': this.setupMigration.bind(this),
+      'migrate:down:run': this.runCommand.bind(this, 'down'),
+      'migrate:create:setup': this.setupMigration.bind(this),
+      'migrate:create:run': this.runCommand.bind(this, 'create'),
+    };
 
-        this.commands = {
-            migrate: {
-                usage: 'Migrations management for Serverless',
-                lifecycleEvents: ['help'],
-                commands: {
-                    list: {
-                        lifecycleEvents: ['setup', 'run'],
-                        usage: 'List migrations and their status',
-                        options: {
-                            ...commonOptions
-                        }
-                    },
-                    up: {
-                        lifecycleEvents: ['setup', 'run'],
-                        usage: 'Migrates up',
-                        options: {
-                            ...commonOptions,
-                            ...nameOption
-                        }
-                    },
-                    down: {
-                        lifecycleEvents: ['setup', 'run'],
-                        usage: 'Migrates down',
-                        options: {
-                            ...commonOptions,
-                            ...nameOption
-                        }
-                    },
-                    create: {
-                        lifecycleEvents: ['setup', 'run'],
-                        usage: 'Creates migration file',
-                        options: {
-                            "template-file": {
-                                usage: 'Set path to template file to use for new migrations',
-                                shortcut: 't'
-                            },
-                            ...commonOptions,
-                            ...nameOption
-                        }
-                    }
-                }
-            }
-        };
+    process.env = this.serverless.service.provider.environment;
+    this.config = this.serverless.service.custom ? this.serverless.service.custom.migrate : {};
+    process.env.SERVERLESS_ROOT_PATH = this.serverless.config.servicePath;
+  }
 
-        this.hooks = {
-            'migrate:help': this.displayHelp.bind(this),
-            'migrate:list:setup': this.setupMigration.bind(this),
-            'migrate:list:run': this.runCommand.bind(this, 'list'),
-            'migrate:up:setup': this.setupMigration.bind(this),
-            'migrate:up:run': this.runCommand.bind(this, 'up'),
-            'migrate:down:setup': this.setupMigration.bind(this),
-            'migrate:down:run': this.runCommand.bind(this, 'down'),
-            'migrate:create:setup': this.setupMigration.bind(this),
-            'migrate:create:run': this.runCommand.bind(this, 'create')
-        };
+  runCommand(cmd) {
+    return this.migration.then(this[cmd].bind(this))
+      .catch(console.error);
+  }
 
-        process.env = this.serverless.service.provider.environment;
-        this.config = this.serverless.service.custom ? this.serverless.service.custom.migrate : {};
-        process.env['SERVERLESS_ROOT_PATH'] = this.serverless.config.servicePath;
-    }
-
-    runCommand(cmd) {
-        return this.migration.then(this[cmd].bind(this))
-            .catch(console.error);
-    }
-
-    setupMigration() {
-        this.migration = new Promise((resolve, reject) => {
-            migrate.load({
-                stateStore: this.options.store || this.config.store || DEFAULT_MIGRATION_STORE,
-                ignoreMissing: this.config.ignoreMissing || false
-            }, (err, set) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(set);
-                }
-            });
-        });
-    }
-
-    up(set) {
-        set.up(this.options.name, function (err) {
-            if (err) {
-                throw err;
-            }
-
-            console.log(`migration ${chalk.cyan("up")}: completed`);
-        });
-    }
-
-    down(set) {
-        set.down(this.options.name, function (err) {
-            if (err) {
-                throw err;
-            }
-
-            console.log(`migration ${chalk.cyan("down")}: completed`);
-        });
-    }
-
-    list(set) {
-        if (set.migrations.length === 0) {
-            console.log('No Migrations were found! Please see run migrate create to add some.');
-            process.exit(1);
-        }
-
-        set.migrations.forEach(m => console.log(... this.getMigrationStatusData(m, set)));
-    }
-
-    create() {
-        const gen = require("migrate/lib/template-generator");
-        const migrationDir = this.config.migrationDir || 'migrations';
-        const templateFile = this.config.templateFile || this.options['template-file'];
-
-        gen({
-            name: this.options.name,
-            dateFormat: this.options["date-format"],
-            templateFile: templateFile,
-            migrationsDirectory: migrationDir,
-            extension: ".js"
-        }, function (err, p) {
-            if (err) {
-                console.error('Template generation error', err.message)
-                process.exit(1);
-            }
-            console.log('create', p);
-        })
-    }
-
-    getMigrationStatusData(migration, set) {
-        const result = [migration.title];
-
-        if (migration.timestamp) {
-            result.push(chalk.cyan(`[${dateFormat(migration.timestamp, this.getDateFormat())}]`));
+  setupMigration() {
+    this.migration = new Promise((resolve, reject) => {
+      migrate.load({
+        stateStore: this.options.store || this.config.store || DEFAULT_MIGRATION_STORE,
+        ignoreMissing: this.config.ignoreMissing || false,
+      }, (err, set) => {
+        if (err) {
+          reject(err);
         } else {
-            result.push(chalk.cyan('[not run]'));
+          resolve(set);
         }
+      });
+    });
+  }
 
-        result.push(migration.description || this.config.noDescriptionText || '<No Description>');
+  up(set) {
+    set.up(this.options.name, (err) => {
+      if (err) {
+        throw err;
+      }
 
-        if (set.lastRun === migration.title) {
-            result.push(chalk.green(this.config.lastRunIndicator || '<==='));
-        }
+      console.log(`migration ${chalk.cyan('up')}: completed`);
+    });
+  }
 
-        return result;
+  down(set) {
+    set.down(this.options.name, (err) => {
+      if (err) {
+        throw err;
+      }
+
+      console.log(`migration ${chalk.cyan('down')}: completed`);
+    });
+  }
+
+  list(set) {
+    if (set.migrations.length === 0) {
+      console.log('No Migrations were found! Please see run migrate create to add some.');
+      process.exit(1);
     }
 
-    displayHelp() {
-        this.serverless.cli.generateCommandsHelp(['migrate']);
+    set.migrations.forEach((m) => console.log(...this.getMigrationStatusData(m, set)));
+  }
+
+  create() {
+    const migrationDir = this.config.migrationDir || 'migrations';
+    const templateFile = this.config.templateFile || this.options['template-file'];
+
+    gen({
+      name: this.options.name,
+      dateFormat: this.options['date-format'],
+      templateFile,
+      migrationsDirectory: migrationDir,
+      extension: '.js',
+    }, (err, p) => {
+      if (err) {
+        console.error('Template generation error', err.message);
+        process.exit(1);
+      }
+      console.log('create', p);
+    });
+  }
+
+  getMigrationStatusData(migration, set) {
+    const result = [migration.title];
+
+    if (migration.timestamp) {
+      result.push(chalk.cyan(`[${dateFormat(migration.timestamp, this.getDateFormat())}]`));
+    } else {
+      result.push(chalk.cyan('[not run]'));
     }
 
-    getDateFormat() {
-        return this.options["date-format"] || this.config.dateFormat || "yyyy-mm-dd";
+    result.push(migration.description || this.config.noDescriptionText || '<No Description>');
+
+    if (set.lastRun === migration.title) {
+      result.push(chalk.green(this.config.lastRunIndicator || '<==='));
     }
+
+    return result;
+  }
+
+  displayHelp() {
+    this.serverless.cli.generateCommandsHelp(['migrate']);
+  }
+
+  getDateFormat() {
+    return this.options['date-format'] || this.config.dateFormat || 'yyyy-mm-dd';
+  }
 }
 
 module.exports = MigratePlugin;

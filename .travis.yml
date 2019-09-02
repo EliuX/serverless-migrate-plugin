@@ -1,8 +1,12 @@
+dist: trusty
+language: node_js
+node_js:
+  - "7"
+
 deploy:
   provider: npm
-  email: eliecerhdz@gmail.com
-  api_key:
-    secure: LYrvIUV8YKNZpAMe/YCkwkZoQLUyO4iryjAEwzQac8eNWoeP5HHMlLu024caFdqWCbXCBk3uB8dvIRv2bRzDG+r5eyuWo1vkgh9OyF8S+NZhF6h53qEXxbBQH6tHDJ7X4PfRZV2nRLStHcR4z64wMcwlw5w45QXAOZR4mx/a1AHhYHMTHTzQmzmrRY13gPqwheLkTM03ATfrYN9CGwJNQEJiU5/fefewt5y/tUesI/SOqImdXQrlFs0lhiL5mbU+Mm4ZsNyg/8HQeBln7EKNI/8eog0TOVRAYjFVtNp8tC6DUV6jxg3+EGPEG+ZnhHawY/HYC6Qewi8ywFKqzajyUXwfbSLsttvaJsZIWbGucXcQAKLC6zsE0kex13jV9LcEQ+zqtaDxGHZd/as1XijY5+uHy5NwurivsIFOIBeIHPaJSt4tkURpqVqxmUDY9E4eomzceAi0RY41dm4Njqm3FBCbMY11gJNkHyyI6mV4cphpAJHIZwrdLJN53wh6oxeLPb6Tfbdae8iG8BWh7Abio88tOqcZ9BDoNlTLft+1b5U3SVdxvuzy+PZqQboqxoufWyJpU947i3kJl4YhFI+LclIrZCGJZPFjssV/7q94Q8Pvg/6aYBY19xpQYmQ7K0Z3C/+4+cx63L0xYqWgn/dXVWf5XdjZoskjnQuVQeIqXFc=
+  email: $NPM_USER
+  api_key: $NPM_TOKEN
   on:
     tags: true
     repo: EliuX/serverless-migrate-plugin

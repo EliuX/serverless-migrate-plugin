@@ -1,13 +1,13 @@
-'use strict'
+'use strict';
 
 module.exports.up = function (next) {
-  console.log("Adding new model");
-  next()
-}
+  console.log('Adding new model');
+  next();
+};
 
 module.exports.down = function (next) {
-  console.log("Removing new model");
-  next()
-}
+  console.log('Removing new model');
+  next();
+};
 
-module.exports.description = "First migration";
+module.exports.description = 'First migration';

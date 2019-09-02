@@ -1,0 +1,12 @@
+{
+  "root": true,
+  "extends": "airbnb-base",
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "strict": "off",
+    "no-console": "off",
+    "import/no-unresolved": "off"
+  }
+}
