@@ -1,7 +1,6 @@
 # Demo project for serverless-migrate-plugin
 
-In this project we are going to use the `serverless-migrate-plugin` in order
-to handle migrations in our projects using [migrate][migrate-npm].
+In this project we are going to see how to use migrations using `serverless-migrate-plugin`.
 
 ## How to set it up
 
@@ -16,7 +15,7 @@ cd sls-migrate-plugin-example
 npm init
 ```
 
-1. Install the serverless-migrate-plugin as a devDependency:
+1. Install the `serverless-migrate-plugin` as a devDependency:
 
 ```bash
 npm i --save-dev serverless-migrate-plugin
