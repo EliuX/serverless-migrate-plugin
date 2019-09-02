@@ -1,6 +1,6 @@
 {
   "name": "serverless-migrate-plugin",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Serverless plugin for migrate",
   "main": "index.js",
   "scripts": {
