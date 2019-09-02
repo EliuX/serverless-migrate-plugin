@@ -1,0 +1,12 @@
+dist: trusty
+language: node_js
+node_js:
+  - "7"
+
+deploy:
+  provider: npm
+  email: $NPM_USER
+  api_key: $NPM_TOKEN
+  on:
+    tags: true
+    repo: EliuX/serverless-migrate-plugin

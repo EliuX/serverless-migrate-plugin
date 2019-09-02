@@ -10,6 +10,9 @@ custom:
     store: .migrate2
     lastRunIndicator: <
     noDescriptionText: '?'
+    ignoreMissing: true
+    dateFormat: "yyyy-MM-dd hh:mm:ssZ"
+    templateFile: "my-project-template.js"
 
 functions:
   hello:
