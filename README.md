@@ -4,28 +4,31 @@ Serverless plugin for migrate
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
 [![npm version](https://badge.fury.io/js/serverless-migrate-plugin.svg)](https://badge.fury.io/js/serverless-migrate-plugin)
 
-This is a Serverless plugin that allows you to use the basic features of [migrate][migrate-npm]. It makes possible:
+This is a Serverless plugin that allows you to use the commands of [migrate][migrate-npm].
 
-* Awareness of the environment variables configured in your serverless.yml
-* Adds the env variable `SERVERLESS_ROOT_PATH` which points to the root directory of your project.
-* Make the commands available via the `serverless` CLI
-
-These migrations are platform independent, regardless the chosen database or cloud provider.
 
 ## Features
+
+With this plugin you can
+* Make the migrate commands available via the `serverless` CLI.
+* Be aware of the environment variables configured in your _serverless.yml_.
+* Add the env variable `SERVERLESS_ROOT_PATH` which points to the root directory of your project.
+* Configure aspects of your migration using your _serverless.yml_.
+
+These migrations can do anything that involves applying actions and undo them.
 Watch the [CHANGELOG](./CHANGELOG.md) to see what has been added to the date.
 
 ## Quick start
 Check out the project located in the folder [example](example) of this repository. It contains a 
 README with all the explanation you need to start creating your migrations. 
-Just for you to have an idea, this is the only thing you need to start doing your migrations:
+So that you have a clue, this is what you must do to start having migrations:
 
 1. Install `serverless-migrate-plugin` in your project:
 ```bash
 npm i serverless-migrate-plugin
 ```
 
-1. Add it to your _serverless.yml_ to the section of `plugins`:
+1. Add it to your _serverless.yml_ to the `plugins` section:
 ```yaml
 plugins: 
   - serverless-migrate-plugin
