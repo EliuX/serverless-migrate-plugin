@@ -1,11 +1,10 @@
 # Demo project for serverless-migrate-plugin
 
-In this project we are going to see how to use migrations using `serverless-migrate-plugin`.
+In this project we are going to see how to start migrating data in your project using `serverless-migrate-plugin`.
 
 ## How to set it up
 
-Following the next steps we can make `serverless-migrate-plugin` ready to be used
-in our project:
+Let's install `serverless-migrate-plugin` following the next steps:
 
 1. Firstly, create a simple serverless project, if you don't have one:
 
@@ -30,23 +29,20 @@ plugins:
   - serverless-migrate-plugin
 ```
 
-... and thatis it. Your project is now setup for doing migrations.
+... and that is it. Your project is now setup for doing migrations.
 
 ## How to demo
 
-Once we have the plugin installed we can check the command line to see what options we have:
+Once we have the plugin installed, we can check the command line to see what options we have:
 
 ```bash
-sls migrate --help
-```
-
-and try out the commands:
-
+sls migrate --help 
 migrate ....................... Migrations management for Serverless
 migrate list .................. List migrations and their status
 migrate up .................... Migrates up
 migrate down .................. Migrates down
 migrate create ................ Creates migration file
+```
 
 Display the help for specific commands if you want to see more details about them. E.g.:
 
@@ -56,21 +52,33 @@ sls migrate list --help
 
 ### Creating migrations
 
-In order to create a migration you should use the original `migrate` cli with the command `create`:
+To create migrations we need to run the command:
 
 ```bash
-migrate create [name]
+sls migrate create [name]
 ```
+ 
+This command is not idempotent, because even if the migration has the same name the file is prefixed by a unique 
+identifier. It will be located by default in the folder `/migrations`.
 
-E.g.
+Once you implement your migration, we can execute it with
 
 ```bash
-migrate create add-second-model
+sls migrate up
 ```
+
+It will run all migrations from the last run until the last added.
+To undo all migrations run thus far, you must run
+
+```bash
+sls migrate down
+```
+
+Which if it is run successfully, it should leave the system as if no change was applied before.
 
 ### Move to an specific migration
 
-Every time you migrate up and down, you get until the end of it:
+Every time we migrate up and down, we apply or undo all the changes:
 
 ```bash
 $ sls migrate up
@@ -80,10 +88,13 @@ do action using DATABASE_NAME=content
 migration up: completed
 ```
 
-But sometimes you want to move only to an specific migration where you did something of interest. For such cases, 
-you can specify the option `name`, putting the same you used when you created that migration. 
+But sometimes we want to move only to an specific migration, where we did something of interest. For such cases, 
+we can specify the option `name`, putting the same it was used when that migration was created. For every file
+the corresponding name will be what is after its hash,
 
-For instance, lets see where we are right now, so we can move until the migration called `add-second-model`.
+ > The file 1567291329157-add-new-model.js has a migration named "add-new-model"
+
+For demonstration purposes, lets see where we are right now, so we can move until the migration called `add-second-model`.
 
 ```bash
 $ sls migrate list
@@ -92,7 +103,7 @@ $ sls migrate list
 1567307130689-using-env-variable-defined-in-serverless.js [Sat Aug 31 2019 23:41:35] Get env variable defined in serverless.yml <===
 ```
 
-As you see that migration is behind the one we are right now, so we have to move `down` to it:
+As it shows up, that migration is behind the one we are right now, so we have to move `down` to it:
 
 ```bash
 $ sls migrate down --name add-second-model
@@ -100,7 +111,7 @@ undo action using DATABASE_NAME=content
 migration down: completed
 ```
 
-Check it worked successfully:
+Let's check if this worked successfully:
 
 ```bash
 $ sls migrate list
@@ -109,20 +120,20 @@ $ sls migrate list
 1567307130689-using-env-variable-defined-in-serverless.js [not run] Get env variable defined in serverless.yml
 ```
 
-As you see the `lastRunIndicator`, which by default is `<===` is pointing to the migration called `add-second-model`.
-Also notice that the one afterwards is not applied, because it says `[not run]`.
+The `lastRunIndicator`, which by default is `<===` is pointing to the migration called `add-second-model`.
+It is also noticed that the one afterwards is not applied, because it says `[not run]`.
 
 ### Use a different migration store
 
-Sometimes we need to keep track of different migrations for a same application. For instance, imagine that you want to 
-track migrations for different stages of your application, e.g. test, staging and production. You can do that by 
-specifying the option `storage` and the folder where you want to put it:
+Sometimes we need to keep track of different migrations for a same application. For instance, imagine that we want to 
+track migrations for different stages of our application, e.g. test, staging and production. It can be done by 
+specifying the option `storage` and the folder where we want to put it:
 
 ```bash
 sls migrate list --storage=.migrate-$SLS_STAGE
 ```
 
-This way you can have a migration file per stage:
+This way we have a migration file per stage:
 
 - .migrate-test
 - .migrate-staging
@@ -130,8 +141,8 @@ This way you can have a migration file per stage:
 
 ### Going a little further
 
-With the help of your serverless.yml we can make these configurations even more flexible. Let's suppose you have a 
-migration like this:
+With the help of our serverless.yml we can make these configurations even more flexible. Let's suppose there is a 
+migration alike the next one:
 
 ```javascript
 'use strict'
@@ -149,8 +160,8 @@ module.exports.down = function (next) {
 module.exports.description = "My migration";
 ```
 
-... and you want to use a `CONNECTION_STRING` different for `production` than the rest of the stages. You can do it 
-with a configuration like
+... and we want to use a different `CONNECTION_STRING` for `production` than the one used for the rest of the stages. 
+This can be easily done with a serverless.yml:
 
 ```yml
 # serverless.yml file
@@ -171,13 +182,14 @@ custom:
       MIGRATION_FILE: migrate-staging
 ```
 
-This way it will not only provide a different `CONNECTION_STRING` for production, but it will
-use one migration file for dev and staging that is different to the one that uses production.
+The previous configuration will not only provide a different `CONNECTION_STRING` for production, but it will also
+use one migration file for `dev` and `staging`, that is different to the one that uses production.
 
 >Note:  These use-cases are for explanation purposes only.
 
 ### Custom variables
-In the serverless.yml in the section custom.migrate, you can specify some variables:
+In the serverless.yml in the section custom.migrate, we can define variables that will change
+aspects of our migrations:
 
 * `store`: The migration states store file you want to use
 * `lastRunIndicator`: The text to append to the last migration that is applied
@@ -188,6 +200,7 @@ In the serverless.yml in the section custom.migrate, you can specify some variab
 By default it is `false`, which makes the program throw an error if a migration is absent.
 
 E.g.
+
 ```yaml
 custom:
   migrate:
@@ -199,7 +212,9 @@ custom:
     templateFile: "my-project-template.js"
 ```
 
->Note: It is recommended to make invisible such store files by adding a `.` at the beginning and add them to the ignore files.
+It is recommended to make invisible such store files by adding a `.` at the beginning and add them to the ignore files.
+Also add them to your `.gitignore` file or any other equivalent for the VCS you are using
 
+Happy coding!
 
 [migrate-npm]: https://www.npmjs.com/package/migrate
