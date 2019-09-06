@@ -6,6 +6,7 @@ const chalk = require('chalk');
 const gen = require('migrate/lib/template-generator');
 
 const DEFAULT_MIGRATION_STORE = '.migrate';
+const DEFAULT_MIGRATION_EXTENSION = '.js';
 
 class MigratePlugin {
   constructor(serverless, options) {
@@ -20,6 +21,10 @@ class MigratePlugin {
       'date-format': {
         usage: 'Set a date format to use. By default it is yyyy-mm-dd.',
         shortcut: 'd',
+      },
+      'file-extension': {
+        usage: `Specifies the extension of the migration files. By default it is ${chalk.cyan('.js')}`,
+        shortcut: 'x',
       },
     };
 
@@ -101,6 +106,7 @@ class MigratePlugin {
       migrate.load({
         stateStore: this.options.store || this.config.store || DEFAULT_MIGRATION_STORE,
         ignoreMissing: this.config.ignoreMissing || false,
+        filterFunction: this.filterByFileExtension.bind(this),
       }, (err, set) => {
         if (err) {
           reject(err);
@@ -149,7 +155,7 @@ class MigratePlugin {
       dateFormat: this.options['date-format'],
       templateFile,
       migrationsDirectory: migrationDir,
-      extension: '.js',
+      extension: DEFAULT_MIGRATION_EXTENSION,
     }, (err, p) => {
       if (err) {
         console.error('Template generation error', err.message);
@@ -183,6 +189,12 @@ class MigratePlugin {
 
   getDateFormat() {
     return this.options['date-format'] || this.config.dateFormat || 'yyyy-mm-dd';
+  }
+
+  filterByFileExtension(file) {
+    // eslint-disable-next-line max-len
+    const fileExtension = this.options['file-extension'] || this.config.fileExtension || DEFAULT_MIGRATION_EXTENSION;
+    return file.endsWith(fileExtension);
   }
 }
 
