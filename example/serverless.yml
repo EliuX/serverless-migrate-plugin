@@ -13,10 +13,11 @@ custom:
     ignoreMissing: true
     dateFormat: "yyyy-MM-dd hh:mm:ssZ"
     templateFile: "my-project-template.js"
+    # fileExtension: .ss  # Uncomment to check it will not work
 
 functions:
   hello:
     handler: handler.hello
 
-plugins: 
+plugins:
   - serverless-migrate-plugin

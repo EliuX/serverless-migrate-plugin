@@ -197,6 +197,7 @@ aspects of our migrations:
 * `ignoreMissing`: Ignores missing migration files if they are not found. 
 * `dateFormat`: The date format to use on the reports. By default it uses `yyyy-mm-dd`.
 * `templateFile`: The template to use to create your migrations.
+* `fileExtension`: Indicates the file extension for the migrations. By default `.js`.
 By default it is `false`, which makes the program throw an error if a migration is absent.
 
 E.g.
