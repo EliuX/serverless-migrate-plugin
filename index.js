@@ -216,7 +216,7 @@ class MigratePlugin {
   }
 
   get storeClassPath() {
-    let storeClassPath = (this.options.store || this.config.store).trim();
+    let storeClassPath = (this.options.store || this.config.store || '').trim();
     if (storeClassPath) {
       if (storeClassPath.startsWith('.')) {
         storeClassPath = path.join(process.cwd(), storeClassPath);
@@ -228,7 +228,7 @@ class MigratePlugin {
   }
 
   get stateFile() {
-    return this.options['state-file'] || this.config.stateFile;
+    return this.options['state-file'] || this.config.stateFile || DEFAULT_MIGRATION_STATE_FILE;
   }
 }
 
