@@ -91,8 +91,11 @@ class MigratePlugin {
       'migrate:create:run': this.runCommand.bind(this, 'create'),
     };
 
-    process.env = this.serverless.service.provider.environment;
     this.config = this.serverless.service.custom ? this.serverless.service.custom.migrate : {};
+    process.env = {
+      ...this.serverless.service.provider.environment,
+      ...this.config.environment,
+    };
     process.env.SERVERLESS_ROOT_PATH = this.serverless.config.servicePath;
   }
 
