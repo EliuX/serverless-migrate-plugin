@@ -5,6 +5,7 @@ provider:
   runtime: nodejs10.x
   environment:
     DATABASE_NAME: content
+    ANOTHER_ENV: original content
 custom:
   migrate:
     store: .migrate2
@@ -13,6 +14,8 @@ custom:
     ignoreMissing: true
     dateFormat: "yyyy-MM-dd hh:mm:ssZ"
     templateFile: "my-project-template.js"
+    environment:
+      ANOTHER_ENV: overrriden value
     # fileExtension: .ss  # Uncomment to check it will not work
 
 functions:

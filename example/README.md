@@ -185,6 +185,35 @@ custom:
 The previous configuration will not only provide a different `CONNECTION_STRING` for production, but it will also
 use one migration file for `dev` and `staging`, that is different to the one that uses production.
 
+But what if I want a different environment variable for migrations?
+You also have `custom.migrate.environment`, which will override any value that you have in `provider.environment`.
+So if you have a configuration like
+
+```yml
+  environment:
+    DATABASE_NAME: content
+    ANOTHER_ENV: original content
+
+  custom:
+    migrate:
+      environment:
+        ANOTHER_ENV: overrriden value
+```
+
+And you print the env variables `DATABASE_NAME` and `ANOTHER_ENV`:
+
+```javascript
+  console.log(`do action using DATABASE_NAME=${process.env.DATABASE_NAME}`);
+  console.log(`do action using ANOTHER_ENV=${process.env.ANOTHER_ENV}`);
+```
+
+You will get
+
+```
+do action using DATABASE_NAME=content
+do action using ANOTHER_ENV=overrriden value
+```
+
 >Note:  These use-cases are for explanation purposes only.
 
 ### Custom variables
@@ -198,6 +227,7 @@ aspects of our migrations:
 * `dateFormat`: The date format to use on the reports. By default it uses `yyyy-mm-dd`.
 * `templateFile`: The template to use to create your migrations.
 * `fileExtension`: Indicates the file extension for the migrations. By default `.js`.
+* `environment`: Overrides the env vars of your app configuration, i.e. `provider.environment`.
 By default it is `false`, which makes the program throw an error if a migration is absent.
 
 E.g.
@@ -211,6 +241,8 @@ custom:
     ignoreMissing: true
     dateFormat: "yyyy-MM-dd hh:mm:ssZ"
     templateFile: "my-project-template.js"
+    environment:
+      ANOTHER_ENV: overrriden value
 ```
 
 It is recommended to make invisible such store files by adding a `.` at the beginning and add them to the ignore files.
