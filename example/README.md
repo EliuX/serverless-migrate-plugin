@@ -127,10 +127,10 @@ It is also noticed that the one afterwards is not applied, because it says `[not
 
 Sometimes we need to keep track of different migrations for a same application. For instance, imagine that we want to 
 track migrations for different stages of our application, e.g. test, staging and production. It can be done by 
-specifying the option `storage` and the folder where we want to put it:
+specifying the option `state-file` and the folder where we want to put it:
 
 ```bash
-sls migrate list --storage=.migrate-$SLS_STAGE
+sls migrate list --state-file=.migrate-$SLS_STAGE
 ```
 
 This way we have a migration file per stage:
@@ -138,6 +138,17 @@ This way we have a migration file per stage:
 - .migrate-test
 - .migrate-staging
 - .migrate-production
+
+In case you want to use your own handler for storing and retrieving the data related to the state of the migrations, you
+can specify the a class for handling it, with the option `store`. E.g.
+
+```bash
+sls migrate list --store=./src/mongodb-store
+```
+
+Check out the [official documentation of migrate][migrate-npm] for more information, but it is recommended to use
+`node_modules/migrate/lib/file-store.js` as a reference.
+ 
 
 ### Going a little further
 
@@ -220,9 +231,11 @@ do action using ANOTHER_ENV=overrriden value
 In the serverless.yml in the section custom.migrate, we can define variables that will change
 aspects of our migrations:
 
-* `store`: The migration states store file you want to use
-* `lastRunIndicator`: The text to append to the last migration that is applied
-* `noDescriptionText`: Text to show when a migration has no description
+* `state-file`: The file where you want the migrations to be stored.
+* `store`: The class that will handle the migrations. By default it uses the one 
+in `node_modules/migrate/lib/file-store.js`.
+* `lastRunIndicator`: The text to append to the last migration that is applied.
+* `noDescriptionText`: Text to show when a migration has no description.
 * `ignoreMissing`: Ignores missing migration files if they are not found. 
 * `dateFormat`: The date format to use on the reports. By default it uses `yyyy-mm-dd`.
 * `templateFile`: The template to use to create your migrations.
@@ -235,7 +248,8 @@ E.g.
 ```yaml
 custom:
   migrate:
-    store: .migrate2
+    stateFile: .migrate2
+    store: ./sample-store
     lastRunIndicator: <
     noDescriptionText: '?'
     ignoreMissing: true

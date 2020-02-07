@@ -4,8 +4,12 @@ const migrate = require('migrate');
 const dateFormat = require('dateformat');
 const chalk = require('chalk');
 const gen = require('migrate/lib/template-generator');
+const path = require('path');
 
-const DEFAULT_MIGRATION_STORE = '.migrate';
+const migrateLibPath = path.dirname(require.resolve('migrate'));
+
+const DEFAULT_MIGRATION_STORE = path.join(migrateLibPath, 'lib', 'file-store');
+const DEFAULT_MIGRATION_STATE_FILE = '.migrate';
 const DEFAULT_MIGRATION_EXTENSION = '.js';
 
 class MigratePlugin {
@@ -14,8 +18,12 @@ class MigratePlugin {
     this.options = options;
 
     const commonOptions = {
+      'state-file': {
+        usage: `Set the path of the state file (default: "${DEFAULT_MIGRATION_STATE_FILE}")`,
+        shortcut: 'f',
+      },
       store: {
-        usage: `The migration states store file you want to use, e.g. ${DEFAULT_MIGRATION_STORE}`,
+        usage: `Set the migrations store (default: "${DEFAULT_MIGRATION_STORE}")`,
         shortcut: 's',
       },
       'date-format': {
@@ -107,7 +115,7 @@ class MigratePlugin {
   setupMigration() {
     this.migration = new Promise((resolve, reject) => {
       migrate.load({
-        stateStore: this.options.store || this.config.store || DEFAULT_MIGRATION_STORE,
+        stateStore: this.stateStore,
         ignoreMissing: this.config.ignoreMissing || false,
         filterFunction: this.filterByFileExtension.bind(this),
       }, (err, set) => {
@@ -172,7 +180,7 @@ class MigratePlugin {
     const result = [migration.title];
 
     if (migration.timestamp) {
-      result.push(chalk.cyan(`[${dateFormat(migration.timestamp, this.getDateFormat())}]`));
+      result.push(chalk.cyan(`[${dateFormat(migration.timestamp, this.dateFormat)}]`));
     } else {
       result.push(chalk.cyan('[not run]'));
     }
@@ -190,14 +198,37 @@ class MigratePlugin {
     this.serverless.cli.generateCommandsHelp(['migrate']);
   }
 
-  getDateFormat() {
+  get dateFormat() {
     return this.options['date-format'] || this.config.dateFormat || 'yyyy-mm-dd';
   }
 
   filterByFileExtension(file) {
-    // eslint-disable-next-line max-len
-    const fileExtension = this.options['file-extension'] || this.config.fileExtension || DEFAULT_MIGRATION_EXTENSION;
+    const fileExtension = this.options['file-extension']
+      || this.config.fileExtension
+      || DEFAULT_MIGRATION_EXTENSION;
     return file.endsWith(fileExtension);
+  }
+
+  get stateStore() {
+    // eslint-disable-next-line global-require,import/no-dynamic-require
+    const Store = require(this.storeClassPath);
+    return new Store(this.stateFile);
+  }
+
+  get storeClassPath() {
+    let storeClassPath = (this.options.store || this.config.store).trim();
+    if (storeClassPath) {
+      if (storeClassPath.startsWith('.')) {
+        storeClassPath = path.join(process.cwd(), storeClassPath);
+      }
+      return storeClassPath;
+    }
+
+    return DEFAULT_MIGRATION_STORE;
+  }
+
+  get stateFile() {
+    return this.options['state-file'] || this.config.stateFile;
   }
 }
 

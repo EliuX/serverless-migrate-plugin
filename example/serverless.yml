@@ -8,7 +8,8 @@ provider:
     ANOTHER_ENV: original content
 custom:
   migrate:
-    store: .migrate2
+    stateFile: .migrate2
+    store: ./sample-store
     lastRunIndicator: <
     noDescriptionText: '?'
     ignoreMissing: true
