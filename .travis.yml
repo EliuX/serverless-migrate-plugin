@@ -7,6 +7,7 @@ deploy:
   provider: npm
   email: $NPM_USER
   api_key: $NPM_TOKEN
+  edge: true
   on:
     tags: true
     repo: EliuX/serverless-migrate-plugin
