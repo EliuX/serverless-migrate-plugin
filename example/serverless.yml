@@ -17,6 +17,7 @@ custom:
     templateFile: "my-project-template.js"
     environment:
       ANOTHER_ENV: overrriden value
+      COMPLEX_VAR: ${opt:pwd, self:provider.env.ANOTHER_ENV, 'unexistent'}
     # fileExtension: .ss  # Uncomment to check it will not work
 
 functions:
