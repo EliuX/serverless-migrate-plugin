@@ -100,7 +100,7 @@ class MigratePlugin {
     };
 
     this.config = this.serverless.service.custom ? this.serverless.service.custom.migrate : {};
-    process.env = {
+    process.env = this.serverless.service.provider.environment = {
       ...this.serverless.service.provider.environment,
       ...this.config.environment,
     };
@@ -216,7 +216,7 @@ class MigratePlugin {
   }
 
   get storeClassPath() {
-    let storeClassPath = (this.options.store || this.config.store).trim();
+    let storeClassPath = (this.options.store || this.config.store || '').trim();
     if (storeClassPath) {
       if (storeClassPath.startsWith('.')) {
         storeClassPath = path.join(process.cwd(), storeClassPath);
@@ -228,7 +228,7 @@ class MigratePlugin {
   }
 
   get stateFile() {
-    return this.options['state-file'] || this.config.stateFile;
+    return this.options['state-file'] || this.config.stateFile || DEFAULT_MIGRATION_STATE_FILE;
   }
 }
 
