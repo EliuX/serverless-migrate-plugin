@@ -13,15 +13,17 @@ With this plugin you can
 * Make the migrate commands available via the `serverless` CLI.
 * Be aware of the environment variables configured in your _serverless.yml_.
 * Add the env variable `SERVERLESS_ROOT_PATH` which points to the root directory of your project.
-* Configure aspects of your migration using your _serverless.yml_.
+* Configure aspects of your migration using your _serverless.yml_: no need to specify them as options with the CLI.
+* Set values to env variables just for the migration context.
+* Specify an indicator of the last run migration.
 
-These migrations can do anything that involves applying actions and undo them.
+Basically, these migrations can do anything that involves applying actions and undo them.
 Watch the [CHANGELOG](./CHANGELOG.md) to see what has been added to the date.
 
 ## Quick start
 Check out the project located in the folder [example](example) of this repository. It contains a 
-README with all the explanation you need to start creating your migrations. 
-So that you have a clue, this is what you must do to start having migrations:
+README with all the explanation you need to start creating your migrations. For starters, this is what you must do to 
+start working with migrations:
 
 1. Install `serverless-migrate-plugin` in your project:
 ```bash
@@ -39,9 +41,8 @@ plugins:
 sls migrate create <your-migration-name>
 ```
 
-Now you are ready to implement your migrations. Once you have finished you can test with using
-
-`sls migrate up` and `sls migrate down`.
+Now you are ready to implement your migrations. Once you have finished, you can test them using `sls migrate up` and 
+`sls migrate down`.
 
 It is highly recommended you to read about how to 
 [create migrations for migrate](https://github.com/tj/node-migrate#creating-migrations).
