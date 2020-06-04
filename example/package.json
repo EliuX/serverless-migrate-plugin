@@ -8,6 +8,6 @@
   "author": "Eliecer Hernandez <eliecerhdz@gmail.com> (https://eliux.github.io)",
   "license": "ISC",
   "dependencies": {
-    "serverless-migrate-plugin": "file:.."
+    "serverless-migrate-plugin": "^1.0.0"
   }
 }
