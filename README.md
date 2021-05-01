@@ -22,9 +22,9 @@ Watch the [CHANGELOG](./CHANGELOG.md) to see what has been added to the date.
 
 ## Quick start
 
-To get into details, it is highly recommended that you check out the [example](example) project of this repository. It
-contains a README with an explanation about all the valid commands and configuration variables you can use. For starters, 
-this is what you must do to start working right away with migrations:
+To get into details, check out the [example](example) project of this repository. It contains a README with an 
+explanation about all the valid commands and configuration variables you can use. For starters, this is what you must do
+to start working right away with migrations:
 
 1. Install `serverless-migrate-plugin` in your project:
 
@@ -45,15 +45,15 @@ plugins:
 sls migrate create -n <your-migration-name>
 ```
 
-Now you are ready to implement your migrations. Once you have finished, you can run them using `sls migrate up`
-and `sls migrate down`. If you want to know more about the commands just run:
+Now you are ready to implement your migrations. Once you have finished, you can run them using `sls migrate up`and
+`sls migrate down`. If you want to know more about any commands just run:
 
 ```bash
  sls migrate <command> --help
 ```
 
-It is highly recommended you to read about how to
-[create migrations for migrate](https://github.com/tj/node-migrate#creating-migrations).
+It is also recommended you READ how the [migrate](https://github.com/tj/node-migrate) library works, like how to
+[create migrations](https://github.com/tj/node-migrate#creating-migrations).
 
 ## Built With
 
@@ -72,4 +72,4 @@ For more information, please visit my [website](http://eliux.github.io).
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 [migrate-npm]: https://www.npmjs.com/package/migrate
-[serverless-web]: https://www.serverless.com/
+[serverless-web]: https://www.serverless.com
