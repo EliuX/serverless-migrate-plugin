@@ -9,14 +9,14 @@ provider:
     BOOLEAN_ENV: true
 custom:
   migrate:
-    stateFile: .migrate
+    stateFile: .migrate2
     store: ./sample-store
-    lastRunIndicator: <
+    lastRunIndicator: <*****
     noDescriptionText: '?'
     ignoreMissing: true
     dateFormat: "yyyy-MM-dd hh:mm:ssZ"
     templateFile: "my-project-template.js"
-    migrationDir: "migrations"
+    migrationDir: "migrations-for-tests"
     environment:
       ANOTHER_ENV: overrriden value
       COMPLEX_VAR: ${opt:pwd, self:provider.env.ANOTHER_ENV, 'unexistent'}

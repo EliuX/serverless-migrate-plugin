@@ -7,3 +7,4 @@ jspm_packages
 
 # Migration folders
 .*migrate*
+migrations-for-tests/*-new-migration.js

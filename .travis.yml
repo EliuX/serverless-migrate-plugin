@@ -1,8 +1,16 @@
 dist: trusty
 language: node_js
 node_js:
-  - "7"
-
+  - "10"
+before_install:
+  - npm link
+  - cd ${TRAVIS_BUILD_DIR}/example
+  - npm install -g serverless
+  - npm link serverless-migrate-plugin
+  - npm install
+install:
+  - echo $(pwd)
+  - bash tests.sh
 deploy:
   provider: npm
   email: $NPM_USER
