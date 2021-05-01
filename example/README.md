@@ -55,11 +55,12 @@ sls migrate list --help
 To create migrations we need to run the command:
 
 ```bash
-sls migrate create [name]
+sls migrate create -n [name]
 ```
- 
-This command is not idempotent, because even if the migration has the same name the file is prefixed by a unique 
-identifier. It will be located by default in the folder `/migrations`.
+
+This command is not idempotent, because even if the migration has the same name the file is prefixed by a unique
+identifier. It will be located by default in the folder `/migrations`. This can be changed with the variable
+`migrationDir` in the plugin config of your _serverless.yml_.
 
 Once you implement your migration, we can execute it with
 
@@ -148,7 +149,6 @@ sls migrate list --store=./src/mongodb-store
 
 Check out the [official documentation of migrate][migrate-npm] for more information, but it is recommended to use
 `node_modules/migrate/lib/file-store.js` as a reference.
- 
 
 ### Going a little further
 
@@ -171,7 +171,7 @@ module.exports.down = function (next) {
 module.exports.description = "My migration";
 ```
 
-... and we want to use a different `CONNECTION_STRING` for `production` than the one used for the rest of the stages. 
+... and we want to use a different `CONNECTION_STRING` for `production` than the one used for the rest of the stages.
 This can be easily done with a serverless.yml:
 
 ```yml
@@ -187,14 +187,14 @@ custom:
     staging:
       CONNECTION_STRING: "protocol://my-connection-string-for-tests-and-staging"
       MIGRATION_FILE: migrate-staging
-    test: ${self:custom.stages.test}
+    test: ${self:custom.stages.staging}
     production:
       CONNECTION_STRING: "protocol://my-connection-string-for-production"
       MIGRATION_FILE: migrate-staging
 ```
 
 The previous configuration will not only provide a different `CONNECTION_STRING` for production, but it will also
-use one migration file for `dev` and `staging`, that is different to the one that uses production.
+use one migration file for `test` and `staging`, that is different to the one that uses production.
 
 But what if I want a different environment variable for migrations?
 You also have `custom.migrate.environment`, which will override any value that you have in `provider.environment`.
@@ -220,7 +220,7 @@ And you print the env variables `DATABASE_NAME` and `ANOTHER_ENV`:
 
 You will get
 
-```
+```bash
 do action using DATABASE_NAME=content
 do action using ANOTHER_ENV=overrriden value
 ```
@@ -228,20 +228,22 @@ do action using ANOTHER_ENV=overrriden value
 >Note:  These use-cases are for explanation purposes only.
 
 ### Custom variables
+
 In the serverless.yml in the section custom.migrate, we can define variables that will change
 aspects of our migrations:
 
-* `state-file`: The file where you want the migrations to be stored.
-* `store`: The class that will handle the migrations. By default it uses the one 
+* `stateFile` (option `state-file`): The file where you want the migrations to be stored. It will be `.migrate` by default.
+* `store` (option `store`): The class that will handle the migrations. By default, it uses the one 
 in `node_modules/migrate/lib/file-store.js`.
-* `lastRunIndicator`: The text to append to the last migration that is applied.
+* `lastRunIndicator` (option `last-run-indicator`): The text to append to the last migration that is applied.
 * `noDescriptionText`: Text to show when a migration has no description.
 * `ignoreMissing`: Ignores missing migration files if they are not found. 
-* `dateFormat`: The date format to use on the reports. By default it uses `yyyy-mm-dd`.
-* `templateFile`: The template to use to create your migrations.
-* `fileExtension`: Indicates the file extension for the migrations. By default `.js`.
+* `dateFormat` (option `date-format`): The date format to use on the reports. By default it uses `yyyy-mm-dd`.
+* `migrationDir` (option `migration-dir`): The name of the folder where the migrations will be stored. By default `migrations`.
+* `templateFile` (option `template-file`): The template to use to create your migrations.
+* `fileExtension`(option `file-extension`): Indicates the file extension for the migrations. By default `.js`.
 * `environment`: Overrides the env vars of your app configuration, i.e. `provider.environment`.
-By default it is `false`, which makes the program throw an error if a migration is absent.
+By default, it is `false`, which makes the program throw an error if a migration is absent.
 
 E.g.
 
@@ -255,6 +257,7 @@ custom:
     ignoreMissing: true
     dateFormat: "yyyy-MM-dd hh:mm:ssZ"
     templateFile: "my-project-template.js"
+    # migrationDir: ".migrations"
     environment:
       ANOTHER_ENV: overrriden value
 ```

@@ -22,30 +22,37 @@ Watch the [CHANGELOG](./CHANGELOG.md) to see what has been added to the date.
 
 ## Quick start
 
-Check out the project located in the folder [example](example) of this repository. It contains a 
-README with all the explanation you need to start creating your migrations. For starters, this is what you must do to 
-start working with migrations:
+To get into details, it is highly recommended that you check out the [example](example) project of this repository. It
+contains a README with an explanation about all the valid commands and configuration variables you can use. For starters, 
+this is what you must do to start working right away with migrations:
 
 1. Install `serverless-migrate-plugin` in your project:
+
 ```bash
 npm i serverless-migrate-plugin
 ```
 
 1. Add it to your _serverless.yml_ to the `plugins` section:
+
 ```yaml
 plugins: 
   - serverless-migrate-plugin
 ```
 
 1. Create your first migration:
+
 ```bash
-sls migrate create <your-migration-name>
+sls migrate create -n <your-migration-name>
 ```
 
-Now you are ready to implement your migrations. Once you have finished, you can test them using `sls migrate up` and 
-`sls migrate down`.
+Now you are ready to implement your migrations. Once you have finished, you can run them using `sls migrate up`
+and `sls migrate down`. If you want to know more about the commands just run:
 
-It is highly recommended you to read about how to 
+```bash
+ sls migrate <command> --help
+```
+
+It is highly recommended you to read about how to
 [create migrations for migrate](https://github.com/tj/node-migrate#creating-migrations).
 
 ## Built With
@@ -54,7 +61,6 @@ It is highly recommended you to read about how to
 test, secure, and monitor your Serverless applications.
 * [Migrate](https://github.com/tj/node-migrate): Abstract migration framework for node.
 * [NodeJS](https://nodejs.org/): As runtime for Javascript 8+.
-
 
 ## Author
 
