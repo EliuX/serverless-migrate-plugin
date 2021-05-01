@@ -4,7 +4,7 @@
   "description": "Serverless plugin for migrate",
   "main": "index.js",
   "scripts": {
-    "test": "echo No test for the moment",
+    "test": "cd example && npm test",
     "lint": "eslint ."
   },
   "repository": {

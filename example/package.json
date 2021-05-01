@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "Example of use of the serverless-migrate-plugin",
   "scripts": {
-    "test": "source tests.sh",
+    "test": "sh tests.sh",
     "list": "sls migrate list",
     "up": "sls migrate up",
     "down": "sls migrate down --store=\" \" --pwd $(pwd)/anotherthing",

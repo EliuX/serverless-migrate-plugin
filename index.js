@@ -120,7 +120,7 @@ class MigratePlugin {
         stateStore: this.stateStore,
         ignoreMissing: this.config.ignoreMissing || false,
         filterFunction: this.filterByFileExtension.bind(this),
-        migrationsDirectory: this.migrationDir,
+        migrationsDirectory: this.getOrCreateMigrationDir(),
       }, (err, set) => {
         if (err) {
           reject(err);
@@ -167,7 +167,7 @@ class MigratePlugin {
       name: this.options.name,
       dateFormat: this.dateFormat,
       templateFile,
-      migrationsDirectory: this.migrationDir,
+      migrationsDirectory: this.getOrCreateMigrationDir(),
       extension: DEFAULT_MIGRATION_EXTENSION,
     }, (err, p) => {
       if (err) {
@@ -240,7 +240,7 @@ class MigratePlugin {
       || DEFAULT_MIGRATION_EXTENSION;
   }
 
-  get migrationDir() {
+  getOrCreateMigrationDir() {
     const migrationDir = this.options['migration-dir'] || this.config.migrationDir || 'migrations';
     this.createDirectory(migrationDir);
     return migrationDir;

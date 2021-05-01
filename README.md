@@ -52,8 +52,8 @@ Now you are ready to implement your migrations. Once you have finished, you can 
  sls migrate <command> --help
 ```
 
-It is also recommended you READ how the [migrate](https://github.com/tj/node-migrate) library works, like how to
-[create migrations](https://github.com/tj/node-migrate#creating-migrations).
+It is also recommended that you understand how the [migrate](https://github.com/tj/node-migrate) library works, like how
+to [create migrations](https://github.com/tj/node-migrate#creating-migrations).
 
 ## Built With
 

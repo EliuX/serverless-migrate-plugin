@@ -10,4 +10,4 @@ npm run up
 npm run down
 npm run list
 
-echo "Every seems Ok!"
+echo It is all good man!

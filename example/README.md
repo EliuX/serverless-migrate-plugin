@@ -68,16 +68,16 @@ Once you implement your migration, we can execute it with
 sls migrate up
 ```
 
-It will run all migrations from the last run until the last added.
+It will run all migrations from the last time executed until the last added migration.
 To undo all migrations run thus far, you must run
 
 ```bash
 sls migrate down
 ```
 
-Which if it is run successfully, it should leave the system as if no change was applied before.
+Which in the case of running successfully, it will leave the system as if no change was applied before.
 
-### Move to an specific migration
+### Move to a target migration
 
 Every time we migrate up and down, we apply or undo all the changes:
 
@@ -89,13 +89,14 @@ do action using DATABASE_NAME=content
 migration up: completed
 ```
 
-But sometimes we want to move only to an specific migration, where we did something of interest. For such cases, 
+Yet sometimes we want to move only to some specific migration, where we did something of interest. For such cases, 
 we can specify the option `name`, putting the same it was used when that migration was created. For every file
 the corresponding name will be what is after its hash,
 
  > The file 1567291329157-add-new-model.js has a migration named "add-new-model"
 
-For demonstration purposes, lets see where we are right now, so we can move until the migration called `add-second-model`.
+For demonstration purposes, lets see where our system is right now, so we can move until the migration called
+`add-second-model`.
 
 ```bash
 $ sls migrate list
@@ -104,7 +105,7 @@ $ sls migrate list
 1567307130689-using-env-variable-defined-in-serverless.js [Sat Aug 31 2019 23:41:35] Get env variable defined in serverless.yml <===
 ```
 
-As it shows up, that migration is behind the one we are right now, so we have to move `down` to it:
+As it shows up, the migration `add-second-model` is behind the one we are right now, so we have to move `down` to it:
 
 ```bash
 $ sls migrate down --name add-second-model
@@ -122,12 +123,12 @@ $ sls migrate list
 ```
 
 The `lastRunIndicator`, which by default is `<===` is pointing to the migration called `add-second-model`.
-It is also noticed that the one afterwards is not applied, because it says `[not run]`.
+Notice also that the one after it is has not been applied, because it says `[not run]`.
 
 ### Use a different migration store
 
 Sometimes we need to keep track of different migrations for a same application. For instance, imagine that we want to 
-track migrations for different stages of our application, e.g. test, staging and production. It can be done by 
+track migrations for different stages of our application, e.g. test, `staging` and `production`. It can be done by 
 specifying the option `state-file` and the folder where we want to put it:
 
 ```bash
@@ -141,7 +142,7 @@ This way we have a migration file per stage:
 - .migrate-production
 
 In case you want to use your own handler for storing and retrieving the data related to the state of the migrations, you
-can specify the a class for handling it, with the option `store`. E.g.
+can specify a class for handling it, with the option `store`. E.g.
 
 ```bash
 sls migrate list --store=./src/mongodb-store
@@ -193,12 +194,12 @@ custom:
       MIGRATION_FILE: migrate-staging
 ```
 
-The previous configuration will not only provide a different `CONNECTION_STRING` for production, but it will also
-use one migration file for `test` and `staging`, that is different to the one that uses production.
+The little trick in the configuration will not only provide a different `CONNECTION_STRING` for production, but it will
+also use one migration file for `test` and `staging`, that is different to the one that uses production.
 
-But what if I want a different environment variable for migrations?
+What if I want a different environment variable for migrations?
 You also have `custom.migrate.environment`, which will override any value that you have in `provider.environment`.
-So if you have a configuration like
+Therefore, if you have a configuration like
 
 ```yml
   environment:
@@ -211,7 +212,7 @@ So if you have a configuration like
         ANOTHER_ENV: overrriden value
 ```
 
-And you print the env variables `DATABASE_NAME` and `ANOTHER_ENV`:
+When you print the env variables `DATABASE_NAME` and `ANOTHER_ENV`:
 
 ```javascript
   console.log(`do action using DATABASE_NAME=${process.env.DATABASE_NAME}`);
@@ -229,8 +230,8 @@ do action using ANOTHER_ENV=overrriden value
 
 ### Custom variables
 
-In the serverless.yml in the section custom.migrate, we can define variables that will change
-aspects of our migrations:
+In the serverless.yml in the section `custom.migrate`, we can define variables that will change aspects of your
+migrations:
 
 * `stateFile` (option `state-file`): The file where you want the migrations to be stored. It will be `.migrate` by default.
 * `store` (option `store`): The class that will handle the migrations. By default, it uses the one 
