@@ -5,6 +5,7 @@ const dateFormat = require('dateformat');
 const chalk = require('chalk');
 const gen = require('migrate/lib/template-generator');
 const path = require('path');
+const fs = require('fs');
 
 const migrateLibPath = path.dirname(require.resolve('migrate'));
 
@@ -104,8 +105,8 @@ class MigratePlugin {
       ...process.env,
       ...this.serverless.service.provider.environment,
       ...this.config.environment,
+      SERVERLESS_ROOT_PATH: this.serverless.config.servicePath,
     };
-    process.env.SERVERLESS_ROOT_PATH = this.serverless.config.servicePath;
   }
 
   runCommand(cmd) {
@@ -119,6 +120,7 @@ class MigratePlugin {
         stateStore: this.stateStore,
         ignoreMissing: this.config.ignoreMissing || false,
         filterFunction: this.filterByFileExtension.bind(this),
+        migrationsDirectory: this.migrationDir,
       }, (err, set) => {
         if (err) {
           reject(err);
@@ -159,14 +161,13 @@ class MigratePlugin {
   }
 
   create() {
-    const migrationDir = this.config.migrationDir || 'migrations';
     const templateFile = this.config.templateFile || this.options['template-file'];
 
     gen({
       name: this.options.name,
-      dateFormat: this.options['date-format'],
+      dateFormat: this.dateFormat,
       templateFile,
-      migrationsDirectory: migrationDir,
+      migrationsDirectory: this.migrationDir,
       extension: DEFAULT_MIGRATION_EXTENSION,
     }, (err, p) => {
       if (err) {
@@ -189,7 +190,7 @@ class MigratePlugin {
     result.push(migration.description || this.config.noDescriptionText || '<No Description>');
 
     if (set.lastRun === migration.title) {
-      result.push(chalk.green(this.config.lastRunIndicator || '<==='));
+      result.push(chalk.green(this.lastRunIndicator));
     }
 
     return result;
@@ -204,10 +205,7 @@ class MigratePlugin {
   }
 
   filterByFileExtension(file) {
-    const fileExtension = this.options['file-extension']
-      || this.config.fileExtension
-      || DEFAULT_MIGRATION_EXTENSION;
-    return file.endsWith(fileExtension);
+    return file.endsWith(this.fileExtension);
   }
 
   get stateStore() {
@@ -230,6 +228,29 @@ class MigratePlugin {
 
   get stateFile() {
     return this.options['state-file'] || this.config.stateFile || DEFAULT_MIGRATION_STATE_FILE;
+  }
+
+  get lastRunIndicator() {
+    return this.options['last-run-indicator'] || this.config.lastRunIndicator || '<===';
+  }
+
+  get fileExtension() {
+    return this.options['file-extension']
+      || this.config.fileExtension
+      || DEFAULT_MIGRATION_EXTENSION;
+  }
+
+  get migrationDir() {
+    const migrationDir = this.options['migration-dir'] || this.config.migrationDir || 'migrations';
+    this.createDirectory(migrationDir);
+    return migrationDir;
+  }
+
+  createDirectory(directory) {
+    const dirPath = path.resolve(directory);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath);
+    }
   }
 }
 
