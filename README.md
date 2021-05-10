@@ -4,7 +4,8 @@ Serverless plugin for migrate
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
 [![npm version](https://badge.fury.io/js/serverless-migrate-plugin.svg)](https://badge.fury.io/js/serverless-migrate-plugin)
 
-This is a plugin for the [Serverless][serverless-web] framework that allows you to manage and run database-agnostic migrations. To do so, it works on top of [migrate][migrate-npm].
+This is a plugin for the [Serverless][serverless-web] framework that allows you to manage and run database-agnostic 
+migrations. To do so, it works on top of [migrate][migrate-npm].
 
 ## Features
 

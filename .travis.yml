@@ -9,8 +9,12 @@ before_install:
   - npm link serverless-migrate-plugin
   - npm install
 install:
-  - echo $(pwd)
-  - bash tests.sh
+  - echo "Running basic commands"
+  - npm run create
+  - npm run up
+  - npm run down
+  - npm run list
+  - echo It is all good man!
 deploy:
   provider: npm
   email: $NPM_USER
