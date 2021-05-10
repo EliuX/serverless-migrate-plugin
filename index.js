@@ -242,7 +242,7 @@ class MigratePlugin {
 
   getOrCreateMigrationDir() {
     const migrationDir = this.options['migration-dir'] || this.config.migrationDir || 'migrations';
-    this.createDirectory(migrationDir);
+    MigratePlugin.createDirectory(migrationDir);
     return migrationDir;
   }
 
