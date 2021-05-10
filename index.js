@@ -246,7 +246,7 @@ class MigratePlugin {
     return migrationDir;
   }
 
-  createDirectory(directory) {
+  static createDirectory(directory) {
     const dirPath = path.resolve(directory);
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath);
