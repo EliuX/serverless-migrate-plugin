@@ -22,18 +22,22 @@ class MigratePlugin {
       'state-file': {
         usage: `Set the path of the state file (default: "${DEFAULT_MIGRATION_STATE_FILE}")`,
         shortcut: 'f',
+        type: 'string',
       },
       store: {
         usage: `Set the migrations store (default: "${DEFAULT_MIGRATION_STORE}")`,
         shortcut: 's',
+        type: 'string',
       },
       'date-format': {
         usage: 'Set a date format to use. By default it is yyyy-mm-dd.',
         shortcut: 'd',
+        type: 'string',
       },
       'file-extension': {
         usage: `Specifies the extension of the migration files. By default it is ${chalk.cyan('.js')}`,
         shortcut: 'x',
+        type: 'string',
       },
     };
 
@@ -41,6 +45,7 @@ class MigratePlugin {
       name: {
         usage: 'The migration name you want to move to',
         shortcut: 'n',
+        type: 'string',
       },
     };
 
@@ -79,6 +84,7 @@ class MigratePlugin {
               'template-file': {
                 usage: 'Set path to template file to use for new migrations',
                 shortcut: 't',
+                type: 'string',
               },
               ...commonOptions,
               ...nameOption,
