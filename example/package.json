@@ -6,7 +6,7 @@
     "test": "sh tests.sh",
     "list": "sls migrate list",
     "up": "sls migrate up",
-    "down": "sls migrate down --store=\" \" --pwd $(pwd)/anotherthing",
+    "down": "sls migrate down --store=\" \" --param=\"pwd=$(pwd)/anotherthing\"",
     "create": "sls migrate create -n new-migration"
   },
   "author": "Eliecer Hernandez <eliecerhdz@gmail.com> (https://eliux.github.io)",
