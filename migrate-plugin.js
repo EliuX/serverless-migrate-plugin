@@ -95,14 +95,11 @@ class MigratePlugin {
     };
 
     this.hooks = {
+      initialize: this.setupMigration.bind(this),
       'migrate:help': this.displayHelp.bind(this),
-      'migrate:list:setup': this.setupMigration.bind(this),
       'migrate:list:run': this.runCommand.bind(this, 'list'),
-      'migrate:up:setup': this.setupMigration.bind(this),
       'migrate:up:run': this.runCommand.bind(this, 'up'),
-      'migrate:down:setup': this.setupMigration.bind(this),
       'migrate:down:run': this.runCommand.bind(this, 'down'),
-      'migrate:create:setup': this.setupMigration.bind(this),
       'migrate:create:run': this.runCommand.bind(this, 'create'),
     };
 
