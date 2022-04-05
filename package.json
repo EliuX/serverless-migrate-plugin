@@ -2,7 +2,7 @@
   "name": "serverless-migrate-plugin",
   "version": "2.2.0",
   "description": "Serverless plugin for migrate",
-  "main": "index.js",
+  "main": "migrate-plugin.js",
   "scripts": {
     "test": "cd example && npm test",
     "lint": "eslint ."
@@ -32,5 +32,8 @@
     "eslint": "^6.3.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2"
+  },
+  "peerDependencies": {
+    "serverless": "^3.11.0"
   }
 }

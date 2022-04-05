@@ -19,7 +19,7 @@ custom:
     migrationDir: "migrations-for-tests"
     environment:
       ANOTHER_ENV: overrriden value
-      COMPLEX_VAR: ${param:pwd, self:provider.env.ANOTHER_ENV, 'unexistent'}
+      COMPLEX_VAR: ${self:provider.env.ANOTHER_ENV, 'unexistent'}
       BOOLEAN_ENV: false
 #   fileExtension: .ss  # Uncomment to check it will not work
 
