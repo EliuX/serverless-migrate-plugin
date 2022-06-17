@@ -40,6 +40,26 @@ plugins:
   - serverless-migrate-plugin
 ```
 
+1. Add a migrate configuration in the `custom` section of your _serverless.yml_:
+
+```yaml
+custom:
+  migrate:
+    stateFile: .migrate2
+    store: ./sample-store
+    lastRunIndicator: <*****
+    noDescriptionText: '?'
+    ignoreMissing: true
+    dateFormat: 'yyyy-MM-dd hh:mm:ssZ'
+    templateFile: 'my-project-template.js'
+    migrationDir: 'migrations-for-tests'
+    environment:
+      ANOTHER_ENV: overrriden value
+      COMPLEX_VAR: ${self:provider.env.ANOTHER_ENV, 'unexistent'}
+      BOOLEAN_ENV: false
+#   fileExtension: .ss  # Uncomment to check it will not work
+```
+
 1. Create your first migration:
 
 ```bash
