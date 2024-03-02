@@ -40,25 +40,23 @@ plugins:
   - serverless-migrate-plugin
 ```
 
-1. Add a migrate configuration in the `custom` section of your _serverless.yml_:
+1. Add a `custom.migrate` section to your _serverless.yml_:
 
 ```yaml
 custom:
   migrate:
     stateFile: .migrate2
     store: ./sample-store
-    lastRunIndicator: <*****
+    lastRunIndicator: <
     noDescriptionText: '?'
     ignoreMissing: true
-    dateFormat: 'yyyy-MM-dd hh:mm:ssZ'
-    templateFile: 'my-project-template.js'
-    migrationDir: 'migrations-for-tests'
+    dateFormat: "yyyy-MM-dd hh:mm:ssZ"
+    templateFile: "my-project-template.js"
     environment:
       ANOTHER_ENV: overrriden value
-      COMPLEX_VAR: ${self:provider.env.ANOTHER_ENV, 'unexistent'}
-      BOOLEAN_ENV: false
-#   fileExtension: .ss  # Uncomment to check it will not work
 ```
+
+You can learn more about these variables in the [example](./example/README.md#custom-variables).
 
 1. Create your first migration:
 
