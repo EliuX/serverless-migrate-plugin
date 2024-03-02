@@ -40,7 +40,7 @@ plugins:
   - serverless-migrate-plugin
 ```
 
-1. Add a `custom.migrate` section to your _serverless.yml_:
+1. Add a `custom.migrate` section to your _serverless.yml_ with the parameters you want to override:
 
 ```yaml
 custom:
