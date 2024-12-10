@@ -2,11 +2,12 @@ name: Serverless Migrate Plugin CI
 
 on:
   push:
-    branches: [ feature/update-readme-custom-migrate ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ feature/update-readme-custom-migrate ]
+    types: [ opened, synchronize, reopened ]
 jobs:
   build:
+    name: Build & test
     runs-on: ubuntu-latest
     permissions:
       contents: read
