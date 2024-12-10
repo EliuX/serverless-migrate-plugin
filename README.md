@@ -40,6 +40,24 @@ plugins:
   - serverless-migrate-plugin
 ```
 
+1. Add a `custom.migrate` section to your _serverless.yml_ with the parameters you want to override:
+
+```yaml
+custom:
+  migrate:
+    stateFile: .migrate2
+    store: ./sample-store
+    lastRunIndicator: <
+    noDescriptionText: '?'
+    ignoreMissing: true
+    dateFormat: "yyyy-MM-dd hh:mm:ssZ"
+    templateFile: "my-project-template.js"
+    environment:
+      ANOTHER_ENV: overrriden value
+```
+
+You can learn more about these variables in the [example](./example/README.md#custom-variables).
+
 1. Create your first migration:
 
 ```bash
