@@ -37,3 +37,13 @@ This will generate a version and a tag
   ```bash
   git push origin --tags
   ```
+
+## How to recreate a release
+Firstly, delete the tag and then push it.
+
+```bash
+git tag --delete <tag, e.g. v3.0.2>
+git push origin --delete <tag>
+```
+
+

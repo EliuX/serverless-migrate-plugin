@@ -1,6 +1,9 @@
 name: Release new version of Serverless Migrate Plugin
 
 on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
   release:
     types: [published]
 jobs:
@@ -26,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Release
+      - name: Publish to npm
+        run: npm publish --provenance --access public
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --provenance --access public
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
