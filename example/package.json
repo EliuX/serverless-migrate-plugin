@@ -11,7 +11,7 @@
   },
   "author": "Eliecer Hernandez <eliecerhdz@gmail.com> (https://eliux.github.io)",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "serverless-migrate-plugin": "file:.."
   }
 }
