@@ -1,0 +1,40 @@
+name: Serverless Migrate Plugin CI
+
+on:
+  push:
+    branches: [ feature/update-readme-custom-migrate ]
+  pull_request:
+    branches: [ feature/update-readme-custom-migrate ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Link package
+        run: |
+          cd ${GITHUB_WORKSPACE}/example
+          npm link serverless-migrate-plugin
+
+      - name: Build and test
+        run: |
+          npm run create
+          npm run up
+          npm run down
+          npm run list
+          echo It is all good man!
+
+      - name: Deploy to npm
+        uses: pnpm/action-deploy@v0
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          PACKAGE_NAME: serverless-migrate-plugin
