@@ -1,0 +1,38 @@
+name: Serverless Migrate Plugin CI
+
+on:
+  push:
+    branches: [ feature/update-readme-custom-migrate ]
+  pull_request:
+    branches: [ feature/update-readme-custom-migrate ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Install dependencies for CI
+        run: npm ci
+
+      - name: Link package
+        run: |
+          cd ${GITHUB_WORKSPACE}/example
+          npm link serverless-migrate-plugin
+
+      - name: Build and test
+        run: |
+          cd ${GITHUB_WORKSPACE}/example
+          npm run create
+          npm run up
+          npm run down
+          npm run list
+          echo It is all good man!
+          cd -
